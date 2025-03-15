@@ -1,6 +1,9 @@
 package com.example.Project_week6.controller;
 
 import com.example.Project_week6.model.StudentCreationDto;
+import com.example.Project_week6.model.StudentDto;
+import com.example.Project_week6.model.StudentPatchData;
+import com.example.Project_week6.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -9,24 +12,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/students")
 @RequiredArgsConstructor
 public class StudentController {
+    private final StudentService studentService = new StudentService();
 
     @PostMapping
-    public void postStudent(@Valid @RequestBody StudentCreationDto student){
-        System.out.println(student.toString());
+    public StudentDto postStudent(@Valid @RequestBody StudentCreationDto student){
+        return studentService.createStudent(student);
     }
 
     @GetMapping("/{id}")
-    public void getStudentById(@PathVariable long id){
-        System.out.println("Student was asked: " + id);
+    public StudentDto getStudentById(@PathVariable long id){
+        return studentService.getStudent(id);
     }
 
     @PatchMapping()
-    public void pathStudent(){
-        System.out.println("Pathced");
+    public StudentDto pathStudent(@RequestBody StudentPatchData studentPatchData){
+        return studentService.solvingTask(studentPatchData.getStudentId(), studentPatchData.getSolvedProblemId());
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStudentById(@PathVariable long id){
-        System.out.println("Student with id " + id + " was deleted");
+    public StudentDto deleteStudentById(@PathVariable long id){
+        return studentService.deleteStudent(id);
     }
 }
