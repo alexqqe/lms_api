@@ -53,6 +53,9 @@ public class TopicService {
     }
 
     public ProblemDto createProblemInTopic(long topicId, ProblemCreationDto problem) {
+        if (!this.data.containsKey(topicId)) {
+            throw new HttpStatusException(HttpStatus.NOT_FOUND, "Topic with id = %s not found".formatted(topicId));
+        }
         TopicDto currentTopic = this.data.get(topicId);
 
         // создаём новую задачу в "общей" хэш-мапе задач

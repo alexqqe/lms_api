@@ -4,6 +4,7 @@ import com.example.Project_week6.model.ProblemCreationDto;
 import com.example.Project_week6.model.ProblemDto;
 import com.example.Project_week6.model.TopicDto;
 import com.example.Project_week6.service.TopicService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,7 +27,7 @@ public class TopicController {
     }
 
     @PostMapping("/{id}/problems")
-    public ProblemDto createProblem(@PathVariable long topicId, @RequestBody ProblemCreationDto problem) {
+    public ProblemDto createProblem(@Valid @PathVariable long topicId, @RequestBody ProblemCreationDto problem) {
         return this.topicService.createProblemInTopic(topicId, problem);
     }
 }
