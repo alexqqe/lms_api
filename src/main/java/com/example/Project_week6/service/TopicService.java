@@ -28,6 +28,13 @@ public class TopicService {
         this.nextId = 0;
     }
 
+    public TopicDto getTopic(long id) {
+        if (!this.data.containsKey(id)) {
+            throw new HttpStatusException(HttpStatus.NOT_FOUND, "Topic with id = %s not found".formatted(id));
+        }
+        return this.data.get(id);
+    }
+
     public void removeTopic(long id) {
         if (!this.data.containsKey(id)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Topic with id = %s not found".formatted(id));

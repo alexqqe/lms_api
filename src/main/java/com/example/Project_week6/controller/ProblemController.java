@@ -7,11 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/problems")
 public class ProblemController {
-    private final ProblemService problemService;
-
-    public ProblemController(ProblemService problemService) {
-        this.problemService = problemService;
-    }
+    private final ProblemService problemService = new ProblemService();
 
     @GetMapping("/{id}")
     public ProblemDto getProblem(@PathVariable long id) {

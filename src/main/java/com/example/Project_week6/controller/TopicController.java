@@ -10,15 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/topics")
 public class TopicController {
-    private final TopicService topicService;
-
-    public TopicController(TopicService topicService) {
-        this.topicService = topicService;
-    }
+    private final TopicService topicService = new TopicService();
 
     @GetMapping("/{id}")
     public TopicDto getTopic(@PathVariable long id) {
-        return this.topicService.getData().get(id);
+        return this.topicService.getTopic(id);
     }
 
     @DeleteMapping("/{id}")
