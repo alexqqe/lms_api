@@ -14,7 +14,7 @@ public class TopicDto {
 
     private HashSet<Long> problems;
 
-    public TopicDto(long id, String title, String text){
+    public TopicDto(long id, String title, String text) {
         this.id = id;
         this.title = title;
         this.text = text;
