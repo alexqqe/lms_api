@@ -18,12 +18,15 @@ import java.util.Map;
 public class StudentService {
     private final Map<Long, StudentDto> data;
     private List<Long> deletedId;
-    @Autowired
     private ProblemService problemService;
 
-    public StudentService(){
+
+    @Autowired
+    public StudentService(ProblemService problemService){
         this.data = new HashMap<>();
         this.deletedId = new ArrayList<>();
+        this.problemService = problemService;
+
     }
 
     public StudentDto createStudent(StudentCreationDto studentCreationDto){
@@ -53,8 +56,8 @@ public class StudentService {
         if (!this.data.containsKey(studentId)){
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Student with id = %s not found".formatted(studentId));
         }
-        if (problemService.getData().get(id) = null){
-            throw new HttpStatusException(HttpStatus.NOT_FOUND, "Student with id = %s not found".formatted(studentId));
+        if (problemService.getData().get(problemId) == null){
+            throw new HttpStatusException(HttpStatus.NOT_FOUND, "Problem with id = %s not found".formatted(studentId));
         }
         StudentDto student = data.get(studentId);
         student.getSolvedProblems().add(problemId);

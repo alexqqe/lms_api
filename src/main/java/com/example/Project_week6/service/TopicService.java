@@ -19,13 +19,14 @@ import java.util.Map;
 public class TopicService {
     private final Map<Long, TopicDto> data;
     private long nextId;
-
-    @Autowired
     private ProblemService problemService;
 
-    public TopicService() {
+    @Autowired
+    public TopicService(ProblemService problemService) {
         this.data = new HashMap<>();
         this.nextId = 0;
+        this.problemService = problemService;
+
     }
 
     public TopicDto getTopic(long id) {

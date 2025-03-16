@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/students")
 @RequiredArgsConstructor
 public class StudentController {
-    private final StudentService studentService = new StudentService();
+    private final StudentService studentService;
 
     @PostMapping
     public StudentDto postStudent(@Valid @RequestBody StudentCreationDto student){

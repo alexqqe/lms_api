@@ -61,7 +61,7 @@ public class StudentServiceTest {
         StudentDto createdStudent = studentService.createStudent(studentCreationDto);
 
         long problemId = 1L;
-        when(problemService.getProblem(problemId)).thenReturn(new ProblemDto(problemId, "Problem title", "12345"));
+        when(problemService.getData().get(problemId)).thenReturn(new ProblemDto(problemId, "Problem title", "12345"));
 
         StudentDto updatedStudent = studentService.solvingTask(createdStudent.getId(), problemId);
 
@@ -81,7 +81,7 @@ public class StudentServiceTest {
         StudentDto createdStudent = studentService.createStudent(studentCreationDto);
 
         long problemId = 1L;
-        when(problemService.getProblem(problemId)).thenReturn(null);
+        when(problemService.getData().get(problemId)).thenReturn(null);
 
         assertThrows(HttpStatusException.class, () -> {
             studentService.solvingTask(createdStudent.getId(), problemId);
