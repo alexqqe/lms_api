@@ -42,7 +42,7 @@ public class StudentService {
         return newStudent;
     }
 
-    public StudentDto getStudent(long id){
+    public StudentDto getStudent(long id) {
         if (!this.data.containsKey(id)){
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Student with id = %s not found".formatted(id));
         }
@@ -53,7 +53,7 @@ public class StudentService {
         if (!this.data.containsKey(studentId)){
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Student with id = %s not found".formatted(studentId));
         }
-        if (problemService.getProblem(problemId) != null){
+        if (problemService.getData().get(id) = null){
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Student with id = %s not found".formatted(studentId));
         }
         StudentDto student = data.get(studentId);
