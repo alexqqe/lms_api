@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.net.HttpRetryException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,7 +36,7 @@ public class TopicService {
         return this.data.get(id);
     }
 
-    public void removeTopic(long id) throws HttpStatusException {
+    public void deleteTopic(long id) throws HttpStatusException {
         if (!this.data.containsKey(id)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Topic with id = %s not found".formatted(id));
         }

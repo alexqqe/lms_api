@@ -1,10 +1,14 @@
 package com.example.Project_week6.service;
 
+import com.example.Project_week6.ecxeption.HttpStatusException;
 import com.example.Project_week6.model.CourseCreationDto;
 import com.example.Project_week6.model.CourseDto;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +18,11 @@ import lombok.AllArgsConstructor;
 public class CourseService {
     private final Map<Long, CourseDto> data;
     private long nextId;
+
+    @Autowired
+    public CourseService(){
+        this.data = new HashMap<>();
+    }
 
     public CourseDto createCourse(CourseCreationDto courseCreationDto) {
         CourseDto newCourseDto = new CourseDto(
@@ -75,11 +84,11 @@ public class CourseService {
         }
         if (this.data.get(courseId).getTopicsId().contains(topicId)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND,
-                    "Topic with id = %s already exist in course with id = %s".formatted(studentId, courseId));
+                    "Topic with id = %s already exist in course with id = %s".formatted(topicId, courseId));
         }
 
-        this.data.get(id).getTopicsId().add(topicId);
+        this.data.get(courseId).getTopicsId().add(topicId);
 
-        return this.data.get(id);
+        return this.data.get(courseId);
     }
 }

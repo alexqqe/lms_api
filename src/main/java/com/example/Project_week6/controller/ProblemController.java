@@ -20,6 +20,6 @@ public class ProblemController {
 
     @DeleteMapping("/{id}")
     public void deleteProblem(@PathVariable long id) {
-        this.problemService.removeProblem(id);
+        this.problemService.deleteProblem(id);
     }
 }

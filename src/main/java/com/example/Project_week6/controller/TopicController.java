@@ -25,7 +25,7 @@ public class TopicController {
 
     @DeleteMapping("/{id}")
     public void deleteTopic(@PathVariable long id) {
-        this.topicService.removeTopic(id);
+        this.topicService.deleteTopic(id);
     }
 
     @PostMapping("/{id}/problems")

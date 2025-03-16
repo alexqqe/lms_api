@@ -36,7 +36,7 @@ public class ProblemService {
         return newProblem;
     }
 
-    public void removeProblem(long id) {
+    public void deleteProblem(long id) {
         if (!this.data.containsKey(id)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Problem with id = %s not found".formatted(id));
         }

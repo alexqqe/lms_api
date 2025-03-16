@@ -8,34 +8,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Getter
 @Service
 public class StudentService {
     private final Map<Long, StudentDto> data;
-    private List<Long> deletedId;
     private ProblemService problemService;
+    private long nextId;
 
 
     @Autowired
     public StudentService(ProblemService problemService){
         this.data = new HashMap<>();
-        this.deletedId = new ArrayList<>();
         this.problemService = problemService;
-
     }
 
     public StudentDto createStudent(StudentCreationDto studentCreationDto){
-        long newId;
-        if (!this.deletedId.isEmpty()){
-            newId = this.deletedId.getFirst();
-        } else {
-            newId = data.size();
-        }
+        long newId = this.nextId;
+        this.nextId++;
         StudentDto newStudent = new StudentDto(newId, studentCreationDto.getLogin(),
                 studentCreationDto.getFirstName(), studentCreationDto.getLastName(),
                 studentCreationDto.getPhoneNumber());
@@ -71,7 +63,6 @@ public class StudentService {
         }
         StudentDto student = data.get(id);
         data.remove(id);
-        this.deletedId.add(id);
         return student;
     }
 }
