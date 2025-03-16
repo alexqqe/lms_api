@@ -5,12 +5,18 @@ import com.example.Project_week6.model.ProblemDto;
 import com.example.Project_week6.model.TopicDto;
 import com.example.Project_week6.service.TopicService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/topics")
 public class TopicController {
-    private final TopicService topicService = new TopicService();
+    private final TopicService topicService;
+
+    @Autowired
+    public TopicController(TopicService topicService){
+        this.topicService = topicService;
+    }
 
     @GetMapping("/{id}")
     public TopicDto getTopic(@PathVariable long id) {
