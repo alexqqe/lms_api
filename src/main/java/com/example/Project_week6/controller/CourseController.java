@@ -5,20 +5,13 @@ import org.springframework.stereotype.Service;
 import com.example.Project_week6.model.CourseCreationDto;
 import com.example.Project_week6.service.CourseService;
 
-/*
-POST /courses — создание нового курса.
-GET /courses/{id} — получение курса.
-DELETE /courses/{id} — удаление курса.
-POST /courses/{courseId}/enroll/{studentId} — запись студента на курс.
-POST /courses/{idcourseId/unenroll/{studentId} — выход студента из курса.
-
-POST /courses/{id}/topics — добавление темы в курс.
- */
-
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
-    private final CourseService courseService = new CourseService();
+    @Autowired
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
+    }
 
     @PostMapping
     public CourseService creatCourse(@Valid @RequestBody CourseCreationDto courseCreationDto) {
