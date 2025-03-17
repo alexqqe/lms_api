@@ -1,3 +1,5 @@
+package com.example.Project_week6.service;
+
 import com.example.Project_week6.ecxeption.HttpStatusException;
 import com.example.Project_week6.model.CourseCreationDto;
 import com.example.Project_week6.model.CourseDto;
