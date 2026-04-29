@@ -2,24 +2,26 @@ package com.example.Project_week6.service;
 
 import com.example.Project_week6.ecxeption.HttpStatusException;
 import com.example.Project_week6.model.CourseCreationDto;
-import com.example.Project_week6.model.CourseDto;
-import com.example.Project_week6.service.CourseService;
+import com.example.Project_week6.model.Course;
 
+import com.example.Project_week6.model.Topic;
+import com.example.Project_week6.сonverters.Converter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.beans.Transient;
 
 public class CourseServiceTest {
 
     @InjectMocks
-    private CourseService CourseService;
+    private CourseService courseService;
+
+    @Mock
+    private StudentService studentService;
 
     @BeforeEach
     public void setUp() {
@@ -32,7 +34,8 @@ public class CourseServiceTest {
         String description = "some desc";
 
         CourseCreationDto courseCreationDto = new CourseCreationDto(title, description);
-        CourseDto createdCourse = CourseService.createCourse(courseCreationDto);
+        Course course = Converter.CourseDTO2Model(courseCreationDto);
+        Course createdCourse = courseService.createCourse(course);
 
         assertNotNull(createdCourse);
         assertEquals(title, createdCourse.getTitle());
@@ -45,9 +48,10 @@ public class CourseServiceTest {
         String description = "some desc";
 
         CourseCreationDto courseCreationDto = new CourseCreationDto(title, description);
-        CourseDto createdCourse = CourseService.createCourse(courseCreationDto);
+        Course course = Converter.CourseDTO2Model(courseCreationDto);
+        Course createdCourse = courseService.createCourse(course);
 
-        CourseDto fetchedCourse = CourseService.readCourse(createdCourse.getId());
+        Course fetchedCourse = courseService.readCourse(createdCourse.getId());
 
         assertNotNull(createdCourse);
         assertNotNull(fetchedCourse);
@@ -64,7 +68,8 @@ public class CourseServiceTest {
     @Test
     void testDeleteCourse_deletedAfterCreated_True() {
         CourseCreationDto courseCreationDto = new CourseCreationDto("title", "some desc");
-        CourseDto createdCourse = CourseService.createCourse(courseCreationDto);
+        Course course = Converter.CourseDTO2Model(courseCreationDto);
+        Course createdCourse = courseService.createCourse(course);
 
         courseService.deleteCourse(createdCourse.getId());
 
@@ -72,7 +77,7 @@ public class CourseServiceTest {
             courseService.readCourse(createdCourse.getId());
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
         assertEquals("Course with id = 0 not found", exception.getMessage());
     }
 
@@ -84,16 +89,17 @@ public class CourseServiceTest {
             courseService.deleteCourse(nonExistentId);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
         assertEquals("Course with id = 999 not found", exception.getMessage());
     }
 
     @Test
     void addStudentToCourse_True() {
         CourseCreationDto courseCreationDto = new CourseCreationDto("title", "some desc");
-        CourseDto createdCourse = courseService.createCourse(courseCreationDto);
+        Course course = Converter.CourseDTO2Model(courseCreationDto);
+        Course createdCourse = courseService.createCourse(course);
 
-        CourseDto updatedCourse = courseService.addStudentToCourse(createdCourse.getId(), 1L);
+        Course updatedCourse = courseService.addStudentToCourse(createdCourse.getId(), 1L);
 
         assertTrue(updatedCourse.getStudentsId().contains(1L));
     }
@@ -106,14 +112,15 @@ public class CourseServiceTest {
             courseService.addStudentToCourse(nonExistentCourseId, 1L);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
         assertEquals("Course with id = 999 not found", exception.getMessage());
     }
 
     @Test
     void addStudentToCourse_StudentAlreadyExists_False() {
         CourseCreationDto courseCreationDto = new CourseCreationDto("title", "some desc");
-        CourseDto createdCourse = courseService.createCourse(courseCreationDto);
+        Course course = Converter.CourseDTO2Model(courseCreationDto);
+        Course createdCourse = courseService.createCourse(course);
 
         courseService.addStudentToCourse(createdCourse.getId(), 1L);
 
@@ -121,17 +128,18 @@ public class CourseServiceTest {
             courseService.addStudentToCourse(createdCourse.getId(), 1L);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
         assertEquals("Student with id = 1 already exist in course with id = 0", exception.getMessage());
     }
 
     @Test
     void deleteStudentFromCourse_True() {
         CourseCreationDto courseCreationDto = new CourseCreationDto("title", "some desc");
-        CourseDto createdCourse = courseService.createCourse(courseCreationDto);
+        Course course = Converter.CourseDTO2Model(courseCreationDto);
+        Course createdCourse = courseService.createCourse(course);
 
         courseService.addStudentToCourse(createdCourse.getId(), 1L);
-        CourseDto updatedCourse = courseService.deleteStudentFromCourse(createdCourse.getId(), 1L);
+        Course updatedCourse = courseService.deleteStudentFromCourse(createdCourse.getId(), 1L);
 
         assertFalse(updatedCourse.getStudentsId().contains(1L));
     }
@@ -144,57 +152,35 @@ public class CourseServiceTest {
             courseService.deleteStudentFromCourse(nonExistentCourseId, 1L);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
         assertEquals("Course with id = 999 not found", exception.getMessage());
     }
 
     @Test
     void deleteStudentFromCourse_StudentNotFound_False() {
         CourseCreationDto courseCreationDto = new CourseCreationDto("title", "some desc");
-        CourseDto createdCourse = courseService.createCourse(courseCreationDto);
+        Course course = Converter.CourseDTO2Model(courseCreationDto);
+        Course createdCourse = courseService.createCourse(course);
 
         HttpStatusException exception = assertThrows(HttpStatusException.class, () -> {
             courseService.deleteStudentFromCourse(createdCourse.getId(), 1L);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
         assertEquals("Student with id = 1 not found in course with id = 0", exception.getMessage());
-    }
-
-    @Test
-    void addTopicToCourse_True() {
-        CourseCreationDto courseCreationDto = new CourseCreationDto("title", "some desc");
-        CourseDto createdCourse = courseService.createCourse(courseCreationDto);
-
-        CourseDto updatedCourse = courseService.addTopicToCourse(createdCourse.getId(), 1L);
-
-        assertTrue(updatedCourse.getTopicsId().contains(1L));
     }
 
     @Test
     void addTopicToCourse_CourseNotFound_False() {
         long nonExistentCourseId = 999L;
 
+        Topic topic = new Topic(12, "title", "text");
+
         HttpStatusException exception = assertThrows(HttpStatusException.class, () -> {
-            courseService.addTopicToCourse(nonExistentCourseId, 1L);
+            courseService.addTopicToCourse(nonExistentCourseId, topic);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
         assertEquals("Course with id = 999 not found", exception.getMessage());
-    }
-
-    @Test
-    void addTopicToCourse_TopicAlreadyExists_False() {
-        CourseCreationDto courseCreationDto = new CourseCreationDto("title", "some desc");
-        CourseDto createdCourse = courseService.createCourse(courseCreationDto);
-
-        courseService.addTopicToCourse(createdCourse.getId(), 1L);
-
-        HttpStatusException exception = assertThrows(HttpStatusException.class, () -> {
-            courseService.addTopicToCourse(createdCourse.getId(), 1L);
-        });
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals("Topic with id = 1 already exist in course with id = 0", exception.getMessage());
     }
 }

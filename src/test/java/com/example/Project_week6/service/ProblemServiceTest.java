@@ -1,8 +1,6 @@
 package com.example.Project_week6.service;
 
 import com.example.Project_week6.ecxeption.HttpStatusException;
-import com.example.Project_week6.model.ProblemCreationDto;
-import com.example.Project_week6.model.ProblemDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -20,9 +18,7 @@ public class ProblemServiceTest {
 
     @Test
     void testCreateProblem_True() {
-        ProblemCreationDto problemCreationDto = new ProblemCreationDto("Problem title", "Problem desc");
 
-        ProblemDto createdProblem = problemService.createProblem(problemCreationDto);
 
         assertNotNull(createdProblem);
         assertEquals(0L, createdProblem.getId());
@@ -35,11 +31,7 @@ public class ProblemServiceTest {
 
     @Test
     void testCreateMultipleProblems_IdsIncrement() {
-        ProblemCreationDto firstProblem = new ProblemCreationDto("First", "First desc");
-        ProblemCreationDto secondProblem = new ProblemCreationDto("Second", "Second desc");
 
-        ProblemDto problem1 = problemService.createProblem(firstProblem);
-        ProblemDto problem2 = problemService.createProblem(secondProblem);
 
         assertEquals(0L, problem1.getId());
         assertEquals(1L, problem2.getId());
@@ -48,8 +40,6 @@ public class ProblemServiceTest {
 
     @Test
     void testRemoveProblem_True() {
-        ProblemCreationDto problemCreationDto = new ProblemCreationDto("Problem title", "Problem desc");
-        ProblemDto createdProblem = problemService.createProblem(problemCreationDto);
 
         assertTrue(problemService.getData().containsKey(createdProblem.getId()));
 

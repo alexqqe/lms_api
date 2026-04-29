@@ -1,9 +1,10 @@
 package com.example.Project_week6.service;
 
 import com.example.Project_week6.ecxeption.HttpStatusException;
-import com.example.Project_week6.model.ProblemDto;
+import com.example.Project_week6.model.Problem;
 import com.example.Project_week6.model.StudentCreationDto;
-import com.example.Project_week6.model.StudentDto;
+import com.example.Project_week6.model.Student;
+import com.example.Project_week6.сonverters.Converter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,7 +30,8 @@ public class StudentServiceTest {
     @Test
     public void testCreateStudent() {
         StudentCreationDto studentCreationDto = new StudentCreationDto("login", "First", "Last", "1234567890");
-        StudentDto createdStudent = studentService.createStudent(studentCreationDto);
+        Student studentForCreation = Converter.StudentDTO2Model(studentCreationDto);
+        Student createdStudent = studentService.createStudent(studentForCreation);
 
         assertNotNull(createdStudent);
         assertEquals("login", createdStudent.getLogin());
@@ -41,9 +43,11 @@ public class StudentServiceTest {
     @Test
     public void testGetStudent() {
         StudentCreationDto studentCreationDto = new StudentCreationDto("login", "First", "Last", "1234567890");
-        StudentDto createdStudent = studentService.createStudent(studentCreationDto);
+        Student studentForCreation = Converter.StudentDTO2Model(studentCreationDto);
 
-        StudentDto fetchedStudent = studentService.getStudent(createdStudent.getId());
+        Student createdStudent = studentService.createStudent(studentForCreation);
+
+        Student fetchedStudent = studentService.getStudent(createdStudent.getId());
 
         assertEquals(createdStudent, fetchedStudent);
     }
@@ -58,12 +62,13 @@ public class StudentServiceTest {
     @Test
     public void testSolvingTask() {
         StudentCreationDto studentCreationDto = new StudentCreationDto("login", "First", "Last", "1234567890");
-        StudentDto createdStudent = studentService.createStudent(studentCreationDto);
+        Student student = Converter.StudentDTO2Model(studentCreationDto);
+        Student createdStudent = studentService.createStudent(student);
 
         long problemId = 1L;
-        when(problemService.getData().get(problemId)).thenReturn(new ProblemDto(problemId, "Problem title", "12345"));
+        when(problemService.getData().get(problemId)).thenReturn(new Problem(problemId, "Problem title", "12345"));
 
-        StudentDto updatedStudent = studentService.solvingTask(createdStudent.getId(), problemId);
+        Student updatedStudent = studentService.solvingTask(createdStudent.getId(), problemId);
 
         assertTrue(updatedStudent.getSolvedProblems().contains(problemId));
     }
@@ -78,7 +83,8 @@ public class StudentServiceTest {
     @Test
     public void testSolvingTaskProblemNotFound() {
         StudentCreationDto studentCreationDto = new StudentCreationDto("login", "First", "Last", "1234567890");
-        StudentDto createdStudent = studentService.createStudent(studentCreationDto);
+        Student student = Converter.StudentDTO2Model(studentCreationDto);
+        Student createdStudent = studentService.createStudent(student);
 
         long problemId = 1L;
         when(problemService.getData().get(problemId)).thenReturn(null);
@@ -91,9 +97,10 @@ public class StudentServiceTest {
     @Test
     public void testDeleteStudent() {
         StudentCreationDto studentCreationDto = new StudentCreationDto("login", "First", "Last", "1234567890");
-        StudentDto createdStudent = studentService.createStudent(studentCreationDto);
+        Student student = Converter.StudentDTO2Model(studentCreationDto);
+        Student createdStudent = studentService.createStudent(student);
 
-        StudentDto deletedStudent = studentService.deleteStudent(createdStudent.getId());
+        Student deletedStudent = studentService.deleteStudent(createdStudent.getId());
 
         assertEquals(createdStudent, deletedStudent);
         assertThrows(HttpStatusException.class, () -> {

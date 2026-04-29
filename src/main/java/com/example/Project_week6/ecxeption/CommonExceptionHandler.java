@@ -1,6 +1,6 @@
 package com.example.Project_week6.ecxeption;
 
-import com.example.Project_week6.model.ErrorDto;
+import com.example.Project_week6.model.Error;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 
 @ControllerAdvice
-public class CommonExceptionHandler {
+public class    CommonExceptionHandler {
 
     @ExceptionHandler(HttpStatusException.class)
-    public ResponseEntity<ErrorDto> handleHttpStatusEx(HttpStatusException e){
-        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorDto(e.getMessage()));
+    public ResponseEntity<Error> handleHttpStatusEx(HttpStatusException e){
+        return ResponseEntity.status(e.getHttpStatus()).body(new Error(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -37,12 +37,12 @@ public class CommonExceptionHandler {
 
         errors.put("details", response);
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
     @ExceptionHandler (Exception.class)
-    public ResponseEntity<ErrorDto> handleException(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDto(e.getMessage()));
+    public ResponseEntity<Error> handleException(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Error(e.getMessage()));
     }
 
 }

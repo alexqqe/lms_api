@@ -1,12 +1,13 @@
 package com.example.Project_week6.service;
 
 import com.example.Project_week6.ecxeption.HttpStatusException;
-import com.example.Project_week6.model.CourseCreationDto;
-import com.example.Project_week6.model.CourseDto;
+import com.example.Project_week6.model.Course;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.Project_week6.model.Topic;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,42 +16,46 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
+@Getter
 public class CourseService {
-    private final Map<Long, CourseDto> data;
+    private final Map<Long, Course> data;
     private long nextId;
+    private final StudentService studentService;
 
     @Autowired
-    public CourseService(){
+    public CourseService(StudentService studentService){
         this.data = new HashMap<>();
+        this.nextId = 0;
+        this.studentService = studentService;
     }
 
-    public CourseDto createCourse(CourseCreationDto courseCreationDto) {
-        CourseDto newCourseDto = new CourseDto(
-                this.nextId,
-                courseCreationDto.getTitle(),
-                courseCreationDto.getDescription());
+    public Course createCourse(Course course) {
+        long newId = this.nextId;
+        course.setId(newId);
+        this.data.put(newId, course);
 
-        this.data.put(this.nextId, newCourseDto);
         this.nextId++;
-
-        return newCourseDto;
+        return course;
     }
 
-    public CourseDto readCourse(long id) {
+    public Course readCourse(long id) {
         if (!this.data.containsKey(id)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Course with id = %s not found".formatted(id));
         }
         return this.data.get(id);
     }
 
-    public void deleteCourse(long id) {
+    public Course deleteCourse(long id) {
         if (!this.data.containsKey(id)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Course with id = %s not found".formatted(id));
         }
+        Course courseBack = this.data.get(id);
         this.data.remove(id);
+
+        return courseBack;
     }
 
-    public CourseDto addStudentToCourse(long courseId, long studentId) {
+    public Course addStudentToCourse(long courseId, long studentId) {
         if (!this.data.containsKey(courseId)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Course with id = %s not found".formatted(courseId));
         }
@@ -58,13 +63,17 @@ public class CourseService {
             throw new HttpStatusException(HttpStatus.NOT_FOUND,
                     "Student with id = %s already exist in course with id = %s".formatted(studentId, courseId));
         }
+        if (!studentService.getData().containsKey(studentId)){
+            throw new HttpStatusException(HttpStatus.BAD_REQUEST,
+                    "Student with id = %s doesnt't exist".formatted(studentId));
+        }
 
-        this.data.get(courseId).getStudentsId().remove(studentId);
+        this.data.get(courseId).getStudentsId().add(studentId);
 
         return this.data.get(courseId);
     }
 
-    public CourseDto deleteStudentFromCourse(long courseId, long studentId) {
+    public Course deleteStudentFromCourse(long courseId, long studentId) {
         if (!this.data.containsKey(courseId)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Course with id = %s not found".formatted(courseId));
         }
@@ -73,21 +82,18 @@ public class CourseService {
                     "Student with id = %s not found in course with id = %s".formatted(studentId, courseId));
         }
 
-        this.data.get(courseId).getStudentsId().add(studentId);
+        this.data.get(courseId).getStudentsId().remove(studentId);
 
         return this.data.get(courseId);
     }
 
-    public CourseDto addTopicToCourse(long courseId, long topicId) {
+    public Course addTopicToCourse(long courseId, Topic topic) {
         if (!this.data.containsKey(courseId)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Course with id = %s not found".formatted(courseId));
         }
-        if (this.data.get(courseId).getTopicsId().contains(topicId)) {
-            throw new HttpStatusException(HttpStatus.NOT_FOUND,
-                    "Topic with id = %s already exist in course with id = %s".formatted(topicId, courseId));
-        }
+        topic.getCourses().add(courseId);
 
-        this.data.get(courseId).getTopicsId().add(topicId);
+        this.data.get(courseId).getTopicsId().add(topic.getId());
 
         return this.data.get(courseId);
     }

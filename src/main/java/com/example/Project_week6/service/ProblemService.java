@@ -1,8 +1,7 @@
 package com.example.Project_week6.service;
 
 import com.example.Project_week6.ecxeption.HttpStatusException;
-import com.example.Project_week6.model.ProblemCreationDto;
-import com.example.Project_week6.model.ProblemDto;
+import com.example.Project_week6.model.Problem;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,33 +12,31 @@ import java.util.Map;
 @Service
 @Getter
 public class ProblemService {
-    private final Map<Long, ProblemDto> data;
+    private final Map<Long, Problem> data;
     private long nextId;
 
     public ProblemService() {
         this.data = new HashMap<>();
-        this.nextId = 0;
-    }
+        this.nextId = 0;}
 
-    public ProblemDto createProblem(ProblemCreationDto problemCreationDto) {
+    public Problem createProblem(Problem problem) {
         long newId = this.nextId;
         this.nextId++;
 
-        ProblemDto newProblem = new ProblemDto(
-                newId,
-                problemCreationDto.getTitle(),
-                problemCreationDto.getDescription()
-        );
+        problem.setId(newId);
 
-        this.data.put(newId, newProblem);
+        this.data.put(newId, problem);
 
-        return newProblem;
+        return problem;
     }
 
-    public void deleteProblem(long id) {
+    public Problem deleteProblem(long id) {
         if (!this.data.containsKey(id)) {
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Problem with id = %s not found".formatted(id));
         }
+        Problem problemBack = this.data.get(id);
+
         this.data.remove(id);
+        return problemBack;
     }
 }

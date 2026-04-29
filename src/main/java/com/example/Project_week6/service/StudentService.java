@@ -1,8 +1,7 @@
 package com.example.Project_week6.service;
 
 import com.example.Project_week6.ecxeption.HttpStatusException;
-import com.example.Project_week6.model.StudentCreationDto;
-import com.example.Project_week6.model.StudentDto;
+import com.example.Project_week6.model.Student;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,8 @@ import java.util.Map;
 @Getter
 @Service
 public class StudentService {
-    private final Map<Long, StudentDto> data;
-    private ProblemService problemService;
+    private final Map<Long, Student> data;
+    private final ProblemService problemService;
     private long nextId;
 
 
@@ -25,43 +24,40 @@ public class StudentService {
         this.problemService = problemService;
     }
 
-    public StudentDto createStudent(StudentCreationDto studentCreationDto){
+    public Student createStudent(Student student){
         long newId = this.nextId;
         this.nextId++;
-        StudentDto newStudent = new StudentDto(newId, studentCreationDto.getLogin(),
-                studentCreationDto.getFirstName(), studentCreationDto.getLastName(),
-                studentCreationDto.getPhoneNumber());
+        student.setId(newId);
+        data.put(newId, student);
 
-        data.put(newId, newStudent);
-
-        return newStudent;
+        return student;
     }
 
-    public StudentDto getStudent(long id) {
+    public Student getStudent(long id) {
         if (!this.data.containsKey(id)){
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Student with id = %s not found".formatted(id));
         }
             return data.get(id);
     }
 
-    public StudentDto solvingTask(long studentId, long problemId){
+    public Student solvingTask(long studentId, long problemId){
         if (!this.data.containsKey(studentId)){
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Student with id = %s not found".formatted(studentId));
         }
         if (problemService.getData().get(problemId) == null){
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Problem with id = %s not found".formatted(studentId));
         }
-        StudentDto student = data.get(studentId);
+        Student student = data.get(studentId);
         student.getSolvedProblems().add(problemId);
         data.put(studentId, student);
         return student;
     }
 
-    public StudentDto deleteStudent(long id){
+    public Student deleteStudent(long id){
         if (!this.data.containsKey(id)){
             throw new HttpStatusException(HttpStatus.NOT_FOUND, "Student with id = %s not found".formatted(id));
         }
-        StudentDto student = data.get(id);
+        Student student = data.get(id);
         data.remove(id);
         return student;
     }

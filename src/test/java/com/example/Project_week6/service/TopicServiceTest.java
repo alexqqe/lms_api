@@ -1,10 +1,8 @@
 package com.example.Project_week6.service;
 
 import com.example.Project_week6.ecxeption.HttpStatusException;
-import com.example.Project_week6.model.ProblemCreationDto;
-import com.example.Project_week6.model.ProblemDto;
-import com.example.Project_week6.model.TopicCreationDto;
-import com.example.Project_week6.model.TopicDto;
+import com.example.Project_week6.model.Problem;
+import com.example.Project_week6.model.Topic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -31,9 +29,9 @@ public class TopicServiceTest {
 
     @Test
     void testCreateTopic_True() {
-        TopicCreationDto topicCreationDto = new TopicCreationDto("Topic title", "Topic text");
+        Topic topicCreationDto = new Topic("Topic title", "Topic text");
 
-        TopicDto createdTopic = topicService.createTopic(topicCreationDto);
+        Topic createdTopic = topicService.createTopic(topicCreationDto);
 
         assertNotNull(createdTopic);
         assertEquals("Topic title", createdTopic.getTitle());
@@ -42,10 +40,10 @@ public class TopicServiceTest {
 
     @Test
     void testGetTopic_True() {
-        TopicCreationDto topicCreationDto = new TopicCreationDto("Topic title", "Topic text");
-        TopicDto createdTopic = topicService.createTopic(topicCreationDto);
+        Topic topicCreationDto = new Topic("Topic title", "Topic text");
+        Topic createdTopic = topicService.createTopic(topicCreationDto);
 
-        TopicDto fetchedTopic = topicService.getTopic(createdTopic.getId());
+        Topic fetchedTopic = topicService.getTopic(createdTopic.getId());
 
         assertEquals(createdTopic.getId(), fetchedTopic.getId());
         assertEquals(createdTopic.getTitle(), fetchedTopic.getTitle());
@@ -64,8 +62,8 @@ public class TopicServiceTest {
 
     @Test
     void testRemoveTopic_True() {
-        TopicCreationDto topicCreationDto = new TopicCreationDto("Topic title", "Topic text");
-        TopicDto createdTopic = topicService.createTopic(topicCreationDto);
+        Topic topicCreationDto = new Topic("Topic title", "Topic text");
+        Topic createdTopic = topicService.createTopic(topicCreationDto);
 
         topicService.deleteTopic(createdTopic.getId());
 
@@ -88,15 +86,15 @@ public class TopicServiceTest {
 
     @Test
     void testCreateProblemInTopic_True() {
-        TopicCreationDto topicCreationDto = new TopicCreationDto("Topic title", "Topic text");
-        TopicDto createdTopic = topicService.createTopic(topicCreationDto);
+        Topic topicCreationDto = new Topic("Topic title", "Topic text");
+        Topic createdTopic = topicService.createTopic(topicCreationDto);
 
-        ProblemCreationDto problemCreationDto = new ProblemCreationDto("Problem title", "Problem desc");
+        Problem problemCreationDto = new Problem("Problem title", "Problem desc");
 
-        ProblemDto mockProblem = new ProblemDto(1L, "Problem title", "Problem desc");
+        Problem mockProblem = new Problem(1L, "Problem title", "Problem desc");
         when(problemService.createProblem(problemCreationDto)).thenReturn(mockProblem);
 
-        ProblemDto createdProblem = topicService.createProblemInTopic(createdTopic.getId(), problemCreationDto);
+        Problem createdProblem = topicService.createProblemInTopic(createdTopic.getId(), problemCreationDto);
 
         assertNotNull(createdProblem);
         assertEquals(1L, createdProblem.getId());
@@ -105,7 +103,7 @@ public class TopicServiceTest {
 
     @Test
     void testCreateProblemInTopic_TopicNotFound() {
-        ProblemCreationDto problemCreationDto = new ProblemCreationDto("Problem title", "Problem desc");
+        Problem problemCreationDto = new Problem("Problem title", "Problem desc");
 
         HttpStatusException exception = assertThrows(HttpStatusException.class, () -> {
             topicService.createProblemInTopic(999L, problemCreationDto);
